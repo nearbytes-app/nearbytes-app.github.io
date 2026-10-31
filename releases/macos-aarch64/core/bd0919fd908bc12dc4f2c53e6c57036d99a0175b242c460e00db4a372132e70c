@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "nearbytes/update/0.1 works"; echo "NEARBYTES-SELFTEST PASS (a test core fetched from the public site)"
