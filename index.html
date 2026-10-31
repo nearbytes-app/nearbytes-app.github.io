@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- The public site's front page, where an invite's link points (identity 0.2 §8): https://nearbytes-app.github.io/#1.<root>.
+     Until the app is served here in the browser, it offers "Open in the app", which opens the app's own link with the
+     same fragment. The fragment, the hub's secret, never leaves the browser: a browser never sends it to the server,
+     this page loads nothing from anywhere else (see the Content-Security-Policy) and sends nothing. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-/t/bJwCby4GZM79tswFSgsuXJlIBujISUP9cDuvvTNQ='; base-uri 'none'; form-action 'none'">
+<title>Nearbytes</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <div class="card">
+    <span class="label">A research proof of concept</span>
+    <h1>Nearbytes</h1>
+    <div id="invite" hidden>
+      <p>You were invited to a hub. Open it in the Nearbytes app to join.</p>
+      <a class="button" id="open" href="nearbytes://join">Open in the app</a>
+      <p class="muted small">Opening hubs right here in the browser is coming.</p>
+      <p class="muted small">The invite stays in this browser: it is never sent to this site or anywhere else.</p>
+    </div>
+    <div id="wrong" hidden>
+      <p>This invite link is not complete. Ask for it again, and open it whole.</p>
+    </div>
+    <div id="none">
+      <p>Files and chat with the people you choose, device to device.</p>
+    </div>
+  </div>
+  <footer class="small muted"><a href="warnings/">Warnings for testers</a></footer>
+</main>
+<script>
+const invite = location.hash.slice(1);
+if (/^1\.[A-Za-z0-9_-]{43}$/.test(invite)) {
+  document.getElementById("open").href = "nearbytes://join#" + invite;
+  document.getElementById("invite").hidden = false;
+  document.getElementById("none").hidden = true;
+} else if (invite !== "") {
+  document.getElementById("wrong").hidden = false;
+  document.getElementById("none").hidden = true;
+}
+</script>
+</body>
+</html>

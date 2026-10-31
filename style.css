@@ -1,0 +1,73 @@
+/* The public site's look (decisions/interface-s-look-sf-pro-no-serif): the system font (SF Pro on Apple systems),
+   cool greys, graphite for the one primary action, colour only on it and on focus; light and dark. WCAG 2.2 AA. */
+:root {
+  color-scheme: light dark;
+  --color-surface: #f4f5f6;
+  --color-surface-raised: #ffffff;
+  --color-border: #e2e3e6;
+  --color-text: #15161a;
+  --color-text-muted: #606369;
+  --color-accent: #1f2024;
+  --color-accent-hover: #3b3d43;
+  --color-on-accent: #ffffff;
+  --color-focus: #3b3d43;
+  --font-family-body: -apple-system, "BlinkMacSystemFont", "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", "Roboto", "Helvetica Neue", system-ui, sans-serif;
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+  --font-size-display: 2rem;
+  --font-weight-strong: 600;
+  --line-height: 1.5;
+  --radius-card: 1rem;
+  --radius-full: 999px;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --width-text: 34rem;
+  --shadow-raised: 0 1px 2px rgb(20 21 24 / 0.06), 0 4px 16px rgb(20 21 24 / 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #141518;
+    --color-surface-raised: #1c1d21;
+    --color-border: #2a2b30;
+    --color-text: #edeef0;
+    --color-text-muted: #a1a3a9;
+    --color-accent: #eeeff1;
+    --color-accent-hover: #cdcfd4;
+    --color-on-accent: #141518;
+    --color-focus: #cdcfd4;
+    --shadow-raised: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: var(--space-xl) var(--space-md); background: var(--color-surface); color: var(--color-text);
+  font: var(--font-size-body) / var(--line-height) var(--font-family-body); -webkit-font-smoothing: antialiased;
+}
+main { width: 100%; max-width: var(--width-text); }
+.card {
+  background: var(--color-surface-raised); border: 1px solid var(--color-border); border-radius: var(--radius-card);
+  box-shadow: var(--shadow-raised); padding: var(--space-xl) var(--space-lg); text-align: center;
+}
+h1 { font-size: var(--font-size-display); font-weight: var(--font-weight-strong); letter-spacing: -0.02em; margin: 0 0 var(--space-sm); }
+p { margin: var(--space-sm) 0; }
+.muted { color: var(--color-text-muted); }
+.small { font-size: var(--font-size-small); }
+.label {
+  display: inline-block; margin-bottom: var(--space-md); font-size: var(--font-size-small); color: var(--color-text-muted);
+  border: 1px solid var(--color-border); border-radius: var(--radius-full); padding: 0 var(--space-sm);
+}
+a { color: inherit; text-underline-offset: 0.15em; }
+a.button {
+  display: inline-block; margin: var(--space-md) 0 var(--space-sm); padding: 0.75rem 1.75rem; border-radius: var(--radius-full);
+  background: var(--color-accent); color: var(--color-on-accent); text-decoration: none; font-weight: var(--font-weight-strong);
+  box-shadow: var(--shadow-raised);
+}
+a.button:hover { background: var(--color-accent-hover); }
+a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+footer { margin-top: var(--space-lg); text-align: center; }
+ol.warnings { text-align: left; padding-left: var(--space-lg); }
+ol.warnings li { margin-bottom: var(--space-md); }
+time { font-weight: var(--font-weight-strong); }

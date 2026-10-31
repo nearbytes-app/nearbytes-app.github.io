@@ -1,0 +1,29 @@
+<!doctype html>
+<!-- The page that warns testers outside the app (update 0.4 §2.2), named by the consent text: on the public site at
+     https://nearbytes-app.github.io/warnings/. The owner posts a warning by adding an <li> to the list below, newest
+     first, with its date and what to do, and removing the "no warning" line; then publishes the site
+     (tools/publish-site.sh). Plain HTML, readable without scripts. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Nearbytes test: warnings</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main>
+  <div class="card">
+    <span class="label">A research proof of concept</span>
+    <h1>Nearbytes test: warnings</h1>
+    <p>If something goes wrong with the test version of Nearbytes, for instance an update that should not be installed, it is said here, with what to do.</p>
+    <p id="no-warning"><strong>There is no warning:</strong> the test version runs as expected.</p>
+    <ol class="warnings">
+    </ol>
+    <p class="muted small">Provider of the test: Vincenzo Ciancia, <a href="mailto:vincenzoml@gmail.com">vincenzoml@gmail.com</a>.</p>
+  </div>
+  <footer class="small muted"><a href="../">Nearbytes</a></footer>
+</main>
+</body>
+</html>
