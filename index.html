@@ -1,14 +1,17 @@
 <!doctype html>
 <!-- The public site's front page, where an invite's link points (identity 0.2 §8): https://nearbytes-app.github.io/#1.<root>.
-     Until the app is served here in the browser, it offers "Open in the app", which opens the app's own link with the
-     same fragment. The fragment, the hub's secret, never leaves the browser: a browser never sends it to the server,
-     this page loads nothing from anywhere else (see the Content-Security-Policy) and sends nothing. -->
+     It offers the hub in the browser, the same app served here at app/ (decision browser-link-opens-whole-hub-browser-
+     platform), and "Open in the app", which opens the app's own link with the same fragment. The fragment, the hub's
+     secret, never leaves the browser: a browser never sends it to the server, this page loads nothing from anywhere
+     else (see the Content-Security-Policy) and sends nothing; it hands the fragment to app/ only as that page's own.
+     HOOK (onboarding, pending with the owner): this page is to become the web app's login; the way in is the link to
+     app/ below ("Open Nearbytes in this browser"), and nothing here gates it. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-/t/bJwCby4GZM79tswFSgsuXJlIBujISUP9cDuvvTNQ='; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-s8pqAk+pB5/kHldv6MJtD/7T6XWRTK0QRwd9eNJQLN4='; base-uri 'none'; form-action 'none'">
 <title>Nearbytes</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -18,9 +21,9 @@
     <span class="label">A research proof of concept</span>
     <h1>Nearbytes</h1>
     <div id="invite" hidden>
-      <p>You were invited to a hub. Open it in the Nearbytes app to join.</p>
-      <a class="button" id="open" href="nearbytes://join">Open in the app</a>
-      <p class="muted small">Opening hubs right here in the browser is coming.</p>
+      <p>You were invited to a hub. Open it here, in this browser, with nothing to install, or in the Nearbytes app.</p>
+      <a class="button" id="here" href="app/">Open in this browser</a>
+      <a class="button secondary" id="open" href="nearbytes://join">Open in the app</a>
       <p class="muted small">The invite stays in this browser: it is never sent to this site or anywhere else.</p>
     </div>
     <div id="wrong" hidden>
@@ -28,6 +31,7 @@
     </div>
     <div id="none">
       <p>Files and chat with the people you choose, device to device.</p>
+      <a class="button" id="app" href="app/">Open Nearbytes in this browser</a>
     </div>
   </div>
   <footer class="small muted"><a href="warnings/">Warnings for testers</a></footer>
@@ -36,6 +40,7 @@
 const invite = location.hash.slice(1);
 if (/^1\.[A-Za-z0-9_-]{43}$/.test(invite)) {
   document.getElementById("open").href = "nearbytes://join#" + invite;
+  document.getElementById("here").href = "app/#" + invite;
   document.getElementById("invite").hidden = false;
   document.getElementById("none").hidden = true;
 } else if (invite !== "") {
