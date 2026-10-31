@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "NEARBYTES-SELFTEST PASS (a test core fetched from the public site)"
