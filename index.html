@@ -5,8 +5,9 @@
      platform), and "Open in the app", which opens the app's own link with the same fragment. The fragment, the hub's
      secret, never leaves the browser: a browser never sends it to the server, this page loads nothing from anywhere
      else (see the Content-Security-Policy) and sends nothing; it hands the fragment to app/ only as that page's own.
-     HOOK (onboarding, pending with the owner): this page is to become the web app's login; the way in is the link to
-     app/ below ("Open Nearbytes in this browser"), and nothing here gates it. -->
+     The front page is the gateway to the test: "Request access" opens the app in this browser, whose first screen is the
+     request (access 0.1); the request reaches the provider through the app's own chat, never through this site
+     (decisions/access-requests-reach-provider-through-app-s). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -32,10 +33,15 @@
     </div>
     <div id="none">
       <p>Files and chat with the people you choose, device to device.</p>
-      <a class="button" id="app" href="app/">Open Nearbytes in this browser</a>
+      <p>This is an unfinished test, open by invitation: ask to take part, and you are let in when the person running the
+        test approves. Your request is a message that goes to them through the app itself; no form, no account, and
+        this site collects nothing.</p>
+      <a class="button" id="app" href="app/">Request access</a>
+      <p class="muted small">Before you ask, read what you are agreeing to: <a href="testers/">the testers' agreement and
+        privacy notice</a>. Already invited? Use the link you were given.</p>
     </div>
   </div>
-  <footer class="small muted"><a href="warnings/">Warnings for testers</a></footer>
+  <footer class="small muted"><a href="testers/">Agreement and privacy notice</a> · <a href="warnings/">Warnings for testers</a></footer>
 </main>
 <script>
 const invite = location.hash.slice(1);
