@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta name="nearbytes-build" content="7362d0109dbd009d" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; worker-src 'self' blob:; connect-src 'self' wss://nearbytes.make-become.workers.dev https://nearbytes.make-become.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'" />
     <meta name="referrer" content="no-referrer" />
     <meta charset="UTF-8" />
+    <!-- The content-security policy and the referrer policy are the host page's, per platform (tools/build-web.sh
+         puts them here, with the tracker's address): the bundle's files carry none. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Nearbytes</title>
-    <script type="module" crossorigin src="./assets/index-BlGX0d2z.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DJ-dK3sO.css">
   </head>
   <body>
-    <div id="app"></div>
+    <p id="status" style="font-family: system-ui, sans-serif; color: #555; margin: 2rem">Opening Nearbytes…</p>
+    <script type="module" src="./host.js"></script>
   </body>
 </html>
