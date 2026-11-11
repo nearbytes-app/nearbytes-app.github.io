@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Nearbytes</title>
+    <!-- Installable from the home screen (todos/web-app-installable-as-pwa-iphone-android): opens without the address bar. -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f4f5f6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Nearbytes" />
+    <script type="module" crossorigin src="./assets/index-DZU4p42m.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/core-CWdvxcep.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-Cic43TMe.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
