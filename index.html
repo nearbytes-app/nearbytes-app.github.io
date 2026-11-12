@@ -14,7 +14,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-6cG0dxdAdu9Dk3lu5sjMT2Qrh7SR+L9hnyFjmDy6Urc='; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-PsYolklwWTkxCkBBoNEKLgP0Eiq52W7SX3Yzh7vnPrk='; base-uri 'none'; form-action 'none'">
 <title>Nearbytes</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -38,8 +38,14 @@
         test approves. Your request is a message that goes to them through the app itself; no form, no account, and
         this site collects nothing.</p>
       <a class="button" id="open-app" href="app/">Open the app</a>
-      <p class="muted small">Already have a home in this browser, or an invitation? Open the app: it opens your home
-        from there. This browser's home opens at once.</p>
+      <p class="muted small">Already have a home in this browser? Open the app: it opens your home from there. This
+        browser's home opens at once.</p>
+      <form id="paste" class="paste">
+        <label for="link">Have an invitation link? Paste it here to enter in this browser:</label>
+        <input id="link" type="text" autocomplete="off" spellcheck="false" placeholder="https://nearbytes-app.github.io/#…">
+        <button class="button" type="submit">Enter</button>
+        <p id="paste-wrong" class="small" role="alert" hidden>That is not a whole invitation link: paste all of it.</p>
+      </form>
       <p>New here?</p>
       <a class="button secondary" id="app" href="app/">Request access</a>
       <p class="muted small">Before you ask, read what you are agreeing to: <a href="testers/">the testers' agreement and
@@ -66,6 +72,16 @@ if (hub || ticket) {
   document.getElementById("wrong").hidden = false;
   document.getElementById("none").hidden = true;
 }
+// An invitation link pasted (bugs/invitation-link-opened-computer-offers-only-open): its fragment goes to app/ in this
+// browser, as "Open in this browser" takes it; nothing is sent anywhere.
+document.getElementById("paste").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = document.getElementById("link").value;
+  const found = /#([12]\.[A-Za-z0-9_-]{43,600})/.exec(text);
+  const frag = found === null ? "" : found[1];
+  if (/^1\.[A-Za-z0-9_-]{43}$/.test(frag) || /^2\.[A-Za-z0-9_-]{60,600}$/.test(frag)) location.href = "app/#" + frag;
+  else document.getElementById("paste-wrong").hidden = false;
+});
 </script>
 </body>
 </html>

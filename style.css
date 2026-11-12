@@ -64,12 +64,12 @@ p { margin: var(--space-sm) 0; }
   border: 1px solid var(--color-border); border-radius: var(--radius-full); padding: 0 var(--space-sm);
 }
 a { color: inherit; text-underline-offset: 0.15em; }
-a.button {
+a.button, button.button {
   display: inline-block; margin: var(--space-md) 0 var(--space-sm); padding: 0.75rem 1.75rem; border-radius: var(--radius-full);
   background: var(--color-accent); color: var(--color-on-accent); text-decoration: none; font-weight: var(--font-weight-strong);
   box-shadow: var(--shadow-raised);
 }
-a.button:hover { background: var(--color-accent-hover); }
+a.button:hover, button.button:hover { background: var(--color-accent-hover); }
 a.button.secondary {
   background: transparent; color: var(--color-text); border: 1px solid var(--color-border); box-shadow: none; margin-left: var(--space-sm);
 }
@@ -102,3 +102,13 @@ time { font-weight: var(--font-weight-strong); }
 .get button.copy:hover { background: var(--color-surface); }
 .get button.copy:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .get a.button { margin-top: var(--space-sm); }
+/* The front page's field for an invitation link pasted, to enter in this browser. */
+.paste { margin: var(--space-md) 0; text-align: left; }
+.paste label { display: block; font-size: var(--font-size-small); color: var(--color-text-muted); margin-bottom: var(--space-sm); }
+.paste input {
+  width: 100%; min-height: var(--size-target); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-control);
+  border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); font: inherit;
+}
+.paste input:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.paste button.button { border: 0; cursor: pointer; font: inherit; font-weight: var(--font-weight-strong); }
+.paste button.button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }

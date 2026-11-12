@@ -1,1 +1,1 @@
-{"format":"nearbytes/update/0.2","layer":"core","version":"1.0.0-beta.1","platform":"windows-x86_64","run":"nearbytes-app.exe","files":[{"path":"nearbytes-app.exe","size":34017280,"sha256":"18b78c9364cb1ee5c66e386cc6877cd11c7f7fb089f28fd5d4a87b4b14dc2b5a","executable":true}]}
+{"format":"nearbytes/update/0.2","layer":"core","version":"1.0.0-beta.2","platform":"windows-x86_64","run":"nearbytes-app.exe","files":[{"path":"nearbytes-app.exe","size":34017280,"sha256":"f7f5ad4b126d3b6182efa5a224ac58dbff558c72d86a16dc4f66f58bbbb1b0aa","executable":true}]}
