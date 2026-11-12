@@ -10,6 +10,8 @@ The public site of Nearbytes, a research proof of concept: https://nearbytes-app
   over WebRTC; the meeting point carries no data.
 - `testers/`: the testers' agreement and privacy notice, made by `tools/make-testers-page.py` from `docs/testers-agreement-and-privacy-notice.md`.
 - `warnings/`: the page that warns testers outside the app.
+- `get/`: the page "get the app": the app for Android, and the one-line install commands for Mac, Linux and Windows,
+  `install.sh` and `install.ps1`, which install a release only after checking its signature with the release key.
 - `releases/`: the release files of the desktop app's plain download, `releases/<platform>/<layer>/release.json`,
   `release.sig` and each file named by its SHA-256. Every release is signed; its integrity rests on that signature.
 

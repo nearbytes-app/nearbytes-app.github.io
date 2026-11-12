@@ -15,6 +15,10 @@
   --font-size-body: 1rem;
   --font-size-small: 0.875rem;
   --font-size-display: 2rem;
+  --font-size-heading: 1.125rem;
+  --font-family-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+  --radius-control: 0.625rem;
+  --size-target: 2rem;
   --font-weight-strong: 600;
   --line-height: 1.5;
   --radius-card: 1rem;
@@ -75,3 +79,26 @@ footer { margin-top: var(--space-lg); text-align: center; }
 ol.warnings { text-align: left; padding-left: var(--space-lg); }
 ol.warnings li { margin-bottom: var(--space-md); }
 time { font-weight: var(--font-weight-strong); }
+/* The page "get the app" (get/): one block per platform, left-aligned, the line to paste in the system's own monospace. */
+.card.get { text-align: left; }
+.card.get > .label, .card.get > h1 { text-align: left; }
+.get section { border-top: 1px solid var(--color-border); margin-top: var(--space-lg); padding-top: var(--space-md); scroll-margin-top: var(--space-md); }
+.get section:target { border-top-color: var(--color-text); }
+.get h2 { font-size: var(--font-size-heading); font-weight: var(--font-weight-strong); margin: 0 0 var(--space-sm); }
+.get .line {
+  display: flex; align-items: center; gap: var(--space-sm); margin: var(--space-sm) 0;
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-control);
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-md);
+}
+.get code {
+  flex: 1; min-width: 0; overflow-wrap: anywhere; font-family: var(--font-family-mono); font-size: var(--font-size-small);
+  user-select: all; -webkit-user-select: all;
+}
+.get button.copy {
+  flex: none; min-height: var(--size-target); padding: 0 var(--space-md); border-radius: var(--radius-full); cursor: pointer;
+  border: 1px solid var(--color-border); background: var(--color-surface-raised); color: var(--color-text);
+  font: inherit; font-size: var(--font-size-small);
+}
+.get button.copy:hover { background: var(--color-surface); }
+.get button.copy:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.get a.button { margin-top: var(--space-sm); }

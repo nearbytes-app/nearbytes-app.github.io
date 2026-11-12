@@ -23,13 +23,32 @@ const status = (words) => {
 
 const hex = (buffer) => [...new Uint8Array(buffer)].map((b) => b.toString(16).padStart(2, "0")).join("");
 const sha256 = async (bytes) => hex(await crypto.subtle.digest("SHA-256", bytes));
-const semver = (v) => String(v).split(/[-+]/)[0].split(".").map(Number);
+// newer: begin. Whether version a comes after version b in the precedence of semantic versioning (semver.org, section
+// 11): numbers first; a pre-release (1.0.0-beta.2) before its release (1.0.0); pre-release identifiers one by one,
+// numbers as numbers and before words, a longer list after its own prefix; build metadata (+...) ignored
+// (todos/app-bundle-packages-carry-version-1-0). A text that is no version is never newer, nor older than one.
 const newer = (a, b) => {
-  const x = semver(a);
-  const y = semver(b);
-  for (let i = 0; i < 3; i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) > (y[i] ?? 0);
-  return false;
+  const parse = (v) => {
+    const m = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(String(v));
+    return m && { core: [Number(m[1]), Number(m[2]), Number(m[3])], pre: m[4] === undefined ? [] : m[4].split(".") };
+  };
+  const x = parse(a);
+  const y = parse(b);
+  if (!x) return false;
+  if (!y) return true;
+  for (let i = 0; i < 3; i++) if (x.core[i] !== y.core[i]) return x.core[i] > y.core[i];
+  if (x.pre.length === 0 || y.pre.length === 0) return x.pre.length === 0 && y.pre.length > 0;
+  for (let i = 0; i < Math.min(x.pre.length, y.pre.length); i++) {
+    const [p, q] = [x.pre[i], y.pre[i]];
+    if (p === q) continue;
+    const [pn, qn] = [/^\d+$/.test(p), /^\d+$/.test(q)];
+    if (pn && qn) return Number(p) > Number(q);
+    if (pn !== qn) return qn;
+    return p > q;
+  }
+  return x.pre.length > y.pre.length;
 };
+// newer: end.
 const types = { html: "text/html", js: "text/javascript", mjs: "text/javascript", css: "text/css", json: "application/json", webmanifest: "application/manifest+json", png: "image/png", svg: "image/svg+xml", ico: "image/x-icon", woff2: "font/woff2", woff: "font/woff", wasm: "application/wasm", txt: "text/plain" };
 const typeOf = (path) => types[path.split(".").pop()] ?? "application/octet-stream";
 

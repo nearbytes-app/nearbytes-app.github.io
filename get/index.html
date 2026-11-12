@@ -1,0 +1,125 @@
+<!doctype html>
+<!-- The page "get the app" (todos/small-page-saying-proof-concept-also-runs): the proof of concept also runs as an app,
+     faster, and how to get it on each platform. Android: the package, laid out as a signed release under
+     releases/android-aarch64/core/ (update 0.4 §6.2) and offered under a readable name. Mac, Linux, Windows: one line
+     that fetches the release, verifies its signature with the release key before writing anything, and installs it in
+     the person's own folder (install.sh, install.ps1 beside this page). The version and the date shown are read from
+     each published release, its manifest's version and the date the site served it (Last-Modified): never typed here.
+     The script fetches only this site's own files (see the Content-Security-Policy): no tracking, nothing external. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; connect-src 'self'; script-src 'sha256-kIigMbev8vULw0HKkKr08G9HqtDx2aOU+TKl7d0eeH0='; base-uri 'none'; form-action 'none'">
+<title>Get the app · Nearbytes</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main>
+  <div class="card get">
+    <span class="label">A research proof of concept</span>
+    <h1>Get the app</h1>
+    <p>Nearbytes is a proof of concept. In a browser it works at once, with nothing to install. The app on your device is
+      faster, and keeps working with its window closed.</p>
+    <p class="muted small" id="version" hidden></p>
+
+    <section id="android" aria-labelledby="h-android">
+      <h2 id="h-android">Android</h2>
+      <p>Download the app's package and open it. Your phone asks whether to allow installing apps from your browser:
+        allow it. It asks because this proof of concept is not in a store.</p>
+      <a class="button" id="apk" href="#android" hidden>Download for Android</a>
+      <p class="muted small" data-platform="android-aarch64">Looking for the latest version…</p>
+    </section>
+
+    <section id="mac" aria-labelledby="h-mac">
+      <h2 id="h-mac">Mac</h2>
+      <p>Open Terminal, paste this line and press Return:</p>
+      <div class="line"><code id="cmd-mac">curl -fsSL https://nearbytes-app.github.io/install.sh | sh</code>
+        <button type="button" class="copy" data-copy="cmd-mac" aria-describedby="cmd-mac" hidden>Copy</button></div>
+      <p class="small">It downloads the app, checks its signature, and puts it in Applications in your home folder,
+        with no administrator rights. Because the line downloads it, not a browser, macOS opens it without the warning
+        for apps from outside the App Store; should it still refuse, open System Settings, Privacy &amp; Security, and
+        choose Open Anyway. For Macs with Apple silicon.</p>
+      <p class="muted small" data-platform="macos-aarch64">Looking for the latest version…</p>
+    </section>
+
+    <section id="windows" aria-labelledby="h-windows">
+      <h2 id="h-windows">Windows</h2>
+      <p>Open PowerShell, paste this line and press Enter:</p>
+      <div class="line"><code id="cmd-windows">irm https://nearbytes-app.github.io/install.ps1 | iex</code>
+        <button type="button" class="copy" data-copy="cmd-windows" aria-describedby="cmd-windows" hidden>Copy</button></div>
+      <p class="small">It downloads the app, checks its signature, and puts it in your own folder, with a shortcut in the
+        Start menu and no administrator rights.</p>
+      <p class="muted small" data-platform="windows-x86_64">Looking for the latest version…</p>
+    </section>
+
+    <section id="linux" aria-labelledby="h-linux">
+      <h2 id="h-linux">Linux</h2>
+      <p>Open a terminal, paste this line and press Enter:</p>
+      <div class="line"><code id="cmd-linux">curl -fsSL https://nearbytes-app.github.io/install.sh | sh</code>
+        <button type="button" class="copy" data-copy="cmd-linux" aria-describedby="cmd-linux" hidden>Copy</button></div>
+      <p class="small">It downloads the app, checks its signature, and puts it in your own folder with an entry in your
+        applications menu, with no administrator rights. It needs WebKitGTK, which most desktops have.</p>
+      <p class="muted small" data-platform="linux-x86_64">Looking for the latest version…</p>
+    </section>
+
+    <section id="iphone" aria-labelledby="h-iphone">
+      <h2 id="h-iphone">iPhone and iPad</h2>
+      <p>There is no iPhone app to hand out yet: that needs Apple's developer programme. <a href="../app/">Use Nearbytes
+        in Safari</a>: it is the same app.</p>
+    </section>
+
+    <p class="muted small">The app is not signed by Apple, Google or Microsoft, since a proof of concept has no store
+      account. Each line above checks instead that what it downloads is signed with the project's own release key, and
+      installs nothing otherwise.</p>
+  </div>
+  <footer class="small muted"><a href="../">Nearbytes</a> · <a href="../testers/">Agreement and privacy notice</a> · <a href="../warnings/">Warnings for testers</a></footer>
+</main>
+<script>
+// Each release's own data: the manifest's version and the date the site served it. A platform without one says so.
+const words = (v) => {
+  const m = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?/.exec(v);
+  if (!m) return v;
+  const pre = m[4] ? " " + m[4].replace(/^([a-z]+)\.?(\d*)$/i, (_, w, n) => (n ? `${w} ${n}` : w)) : "";
+  return `${m[1]}.${m[2]}${m[3] === "0" ? "" : "." + m[3]}${pre}`;
+};
+const day = (h) => {
+  const d = h ? new Date(h) : null;
+  return d && !isNaN(d) ? d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "";
+};
+const shown = [];
+for (const el of document.querySelectorAll("[data-platform]")) {
+  const dir = `../releases/${el.dataset.platform}/core/`;
+  fetch(dir + "release.json", { cache: "no-cache" })
+    .then((r) => (r.ok ? r.json().then((m) => [m, r.headers.get("last-modified")]) : Promise.reject()))
+    .then(([m, modified]) => {
+      const when = day(modified);
+      el.textContent = `Version ${words(m.version)}${when ? ", " + when : ""}.`;
+      if (shown.length === 0) {
+        shown.push(m.version);
+        const v = document.getElementById("version");
+        v.textContent = `Version ${words(m.version)}`;
+        v.hidden = false;
+      }
+      if (el.dataset.platform.startsWith("android-")) {
+        const file = (m.files || []).find((f) => f.path === m.run);
+        const a = document.getElementById("apk");
+        if (file && /^[0-9a-f]{64}$/.test(file.sha256)) {
+          a.href = dir + file.sha256;
+          a.setAttribute("download", `nearbytes-${m.version}.apk`);
+          a.hidden = false;
+        }
+      }
+    })
+    .catch(() => (el.textContent = "Not available yet: use Nearbytes in the browser meanwhile."));
+}
+for (const b of document.querySelectorAll("button.copy")) {
+  if (!navigator.clipboard) continue;
+  b.hidden = false;
+  b.addEventListener("click", () =>
+    navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent).then(() => (b.textContent = "Copied")));
+}
+</script>
+</body>
+</html>
