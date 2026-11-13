@@ -11,7 +11,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; connect-src 'self'; script-src 'sha256-kIigMbev8vULw0HKkKr08G9HqtDx2aOU+TKl7d0eeH0='; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; connect-src 'self'; script-src 'sha256-3wUpAl6YQfbqtKjbACSFYZQ+3fCLkKgwGWIL6HLRp9M='; base-uri 'none'; form-action 'none'">
 <title>Get the app · Nearbytes</title>
 <link rel="stylesheet" href="../style.css">
 </head>
@@ -105,8 +105,10 @@ for (const el of document.querySelectorAll("[data-platform]")) {
       if (el.dataset.platform.startsWith("android-")) {
         const file = (m.files || []).find((f) => f.path === m.run);
         const a = document.getElementById("apk");
+        // The package under a name ending in .apk, laid beside this page by tools/publish-site.sh: a phone saves a
+        // file named by its hash without an extension, and its installer does not offer to open it.
         if (file && /^[0-9a-f]{64}$/.test(file.sha256)) {
-          a.href = dir + file.sha256;
+          a.href = "nearbytes.apk";
           a.setAttribute("download", `nearbytes-${m.version}.apk`);
           a.hidden = false;
         }
