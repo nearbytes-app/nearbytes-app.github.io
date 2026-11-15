@@ -78,7 +78,8 @@ if (typeof self !== "undefined" && self.addEventListener) {
   self.addEventListener("fetch", (event) => {
     const request = event.request;
     if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
-    event.respondWith(answer(request, self.caches, (r) => fetch(r), self.registration.scope));
+    // no-cache: revalidated each time, so that a reload after "This version is out of date" never runs a stale page.
+    event.respondWith(answer(request, self.caches, (r) => fetch(r, { cache: "no-cache" }), self.registration.scope));
   });
 }
 
