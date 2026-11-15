@@ -13,7 +13,6 @@
 
 const BUNDLE = "nearbytes-bundle-";
 const HOST = "nearbytes-host";
-const DEFAULT_SIGNAL = "wss://nearbytes.make-become.workers.dev";
 const here = new URL("./", location.href);
 const text = new TextDecoder();
 const status = (words) => {
@@ -77,6 +76,17 @@ async function port() {
   return { check, core: await sha256(bytes) };
 }
 
+// meeting points: begin
+// The meeting points, in order (meeting-point 0.2 §10.1): the first's store is the one used.
+const DEFAULT_SIGNALS = ["wss://nearbytes.make-become.workers.dev", "wss://sleipnir.taildccb32.ts.net"];
+// config.json's "signal": a list of wss:// addresses, or one as a single string (every older site's); else the defaults.
+function meetingPoints(given) {
+  if (typeof given === "string" && given !== "") return [given];
+  const list = Array.isArray(given) ? given.filter((s) => typeof s === "string" && s !== "") : [];
+  return list.length > 0 ? list : DEFAULT_SIGNALS;
+}
+// meeting points: end
+
 async function config() {
   try {
     const r = await fetch(new URL("config.json", here), { cache: "no-cache" });
@@ -88,7 +98,8 @@ async function config() {
 
 async function main() {
   const given = await config();
-  const signal = typeof given.signal === "string" ? given.signal : DEFAULT_SIGNAL;
+  const signals = meetingPoints(given.signal);
+  const signal = signals[0];
   const site = new URL(typeof given.bundle === "string" ? given.bundle : "../bundle/", here);
   const file = (p) => new URL(p, site);
   const { check, core } = await port();
@@ -196,6 +207,7 @@ async function main() {
     build: chosen.hash,
     core,
     signal,
+    signals,
     latest: async () => latest(),
     stage: async (hash) => {
       const staged = await ensure(hash);
