@@ -4,8 +4,10 @@
 //    storage, `nearbytes-bundle-<manifest hash>`: the bundle in use at the site's paths, a bundle staged for an update
 //    under `@<manifest hash>/`. Nothing else ever answers for a file of the bundle.
 // 2. Every other same-site GET (the host page, its script, the core, the configuration) is answered by the network and
-//    kept as it was last seen; with the network gone, what was kept answers, so the app opens on a phone with no signal
-//    (bugs/web-app-cannot-open-while-browser-offline). Other sites (the meeting point, the tracker) are never touched.
+//    kept as it was last seen; with the network gone, or the site answering with an error (5xx, 404), what was kept
+//    answers, so the app opens on a phone with no signal (bugs/web-app-cannot-open-while-browser-offline) and whatever
+//    the site does (bugs/web-app-does-not-open-from-kept). A good answer from the site is taken and kept, so a newer
+//    version is picked up as soon as the site serves one. Other sites (the meeting point, the tracker) are never touched.
 // 3. A wake from the meeting point (meeting-point 0.2 §7), which carries nothing, is told as "New activity" unless a
 //    window of the app is open (that one syncs and tells in its own words); a click on it brings a window of the app, or opens one. The words are made
 //    here, on the device: a closed tab holds no unlocked home, so it reads nothing (logic/lock.ts NEW_ACTIVITY).
@@ -34,20 +36,35 @@ async function ofBundle(url, scope, caches) {
   return (await caches.open(BUNDLE + hash)).match(`${scope}${file === "" ? "index.html" : file}`);
 }
 
-/** Answers `request`: the network's answer, kept; or, with no network, the kept one. */
+/** Answers `request`: the network's good answer, kept; or, with no network or an error from the site, the kept one. */
 async function answer(request, caches, fetcher, scope) {
   const own = scope === undefined ? undefined : await ofBundle(typeof request === "string" ? request : request.url, scope, caches);
   if (own) return own;
   const kept = await caches.open(KEPT);
   try {
     const fresh = await fetcher(request);
-    if (fresh.ok) await kept.put(request, fresh.clone());
-    return fresh;
+    if (fresh.ok) {
+      await kept.put(request, fresh.clone());
+      return fresh;
+    }
+    // An error from the site (not a redirect, which is no failure): what was kept, if anything.
+    return (fresh.status >= 400 && (await kept.match(request))) || fresh;
   } catch (e) {
     const old = await kept.match(request);
     if (old) return old;
     throw e;
   }
+}
+
+/** At the first visit the page and its script came before this worker: kept now, so that the app opens from what
+ * the device holds at the very next visit, whatever answers (identity 0.5 §4.5); what is not answered now is left for the next answer. */
+async function keepHost(caches, fetcher, scope) {
+  const kept = await caches.open(KEPT);
+  await Promise.all([scope, `${scope}host.js`, `${scope}config.json`, `${scope}core/nearbytes_web.wasm`].map(async (url) => {
+    if (await kept.match(url)) return;
+    const fresh = await fetcher(url).catch(() => null);
+    if (fresh?.ok) await kept.put(url, fresh);
+  }));
 }
 
 /** The notification a wake shows, the lock's words (logic/lock.ts NEW_ACTIVITY); one at a time, a later one replacing it. */
@@ -74,7 +91,10 @@ if (typeof self !== "undefined" && self.addEventListener) {
   self.addEventListener("push", (event) => event.waitUntil(woken(self.clients, self.registration)));
   self.addEventListener("notificationclick", (event) => event.waitUntil(clicked(event.notification, self.clients, self.registration.scope)));
   self.addEventListener("install", () => self.skipWaiting());
-  self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+  self.addEventListener("activate", (event) => event.waitUntil(Promise.all([
+    self.clients.claim(),
+    keepHost(self.caches, (r) => fetch(r, { cache: "no-cache" }), self.registration.scope).catch(() => {}),
+  ])));
   self.addEventListener("fetch", (event) => {
     const request = event.request;
     if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
@@ -83,4 +103,4 @@ if (typeof self !== "undefined" && self.addEventListener) {
   });
 }
 
-if (typeof module !== "undefined") module.exports = { answer, ofBundle, woken, clicked, WAKE };
+if (typeof module !== "undefined") module.exports = { answer, ofBundle, keepHost, woken, clicked, WAKE };

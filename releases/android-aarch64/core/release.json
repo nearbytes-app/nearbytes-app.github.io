@@ -1,1 +1,1 @@
-{"format":"nearbytes/update/0.2","layer":"core","version":"1.0.0-beta.11","platform":"android-aarch64","run":"nearbytes.apk","files":[{"path":"nearbytes.apk","size":77345608,"sha256":"2dbef93bc6b05d01a03e2806fe1e6e2ee4b400c3957f8d076e9e3d8fcb91f322","executable":true}]}
+{"format":"nearbytes/update/0.2","layer":"core","version":"1.0.0-beta.12","platform":"android-aarch64","run":"nearbytes.apk","files":[{"path":"nearbytes.apk","size":77398928,"sha256":"45535256d6f8fda0342281bb4c68d1c70af625cdc9e159ab68baf9406636ff1b","executable":true}]}
