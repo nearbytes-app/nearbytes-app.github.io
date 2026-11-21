@@ -97,21 +97,37 @@ async function config() {
 }
 
 async function main() {
+  // The configuration, the core's check, the service worker and the site's latest bundle are asked at once, not one
+  // after the other: each is a round trip (bugs/home-opens-40-s-after-login-phone).
+  const porting = port();
+  porting.catch(() => undefined);
+  const working = (async () => {
+    if (!("serviceWorker" in navigator)) throw new Error("this browser cannot keep the app's files");
+    await navigator.serviceWorker.register(new URL("sw.js", here));
+    await navigator.serviceWorker.ready;
+    if (!navigator.serviceWorker.controller) {
+      await new Promise((resolve) => {
+        navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
+        if (navigator.serviceWorker.controller) resolve();
+      });
+    }
+  })();
+  working.catch(() => undefined);
   const given = await config();
   const signals = meetingPoints(given.signal);
   const signal = signals[0];
   const site = new URL(typeof given.bundle === "string" ? given.bundle : "../bundle/", here);
   const file = (p) => new URL(p, site);
-  const { check, core } = await port();
-  if (!("serviceWorker" in navigator)) throw new Error("this browser cannot keep the app's files");
-  await navigator.serviceWorker.register(new URL("sw.js", here));
-  await navigator.serviceWorker.ready;
-  if (!navigator.serviceWorker.controller) {
-    await new Promise((resolve) => {
-      navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true });
-      if (navigator.serviceWorker.controller) resolve();
-    });
-  }
+  const latest = async () => {
+    const r = await fetch(file("version.json"), { cache: "no-store" });
+    if (!r.ok) throw new Error(`version.json: ${r.status}`);
+    const m = (await r.json()).manifest;
+    return typeof m === "string" && /^[0-9a-f]{64}$/.test(m) ? m : null;
+  };
+  const asking = latest();
+  asking.catch(() => undefined);
+  const { check, core } = await porting;
+  await working;
   const host = await caches.open(HOST);
   const pointer = new URL("__current", here).href;
 
@@ -172,24 +188,19 @@ async function main() {
       const manifest = await bytesOf(await cache.match(new URL("__manifest", here)));
       const m = JSON.parse(text.decode(manifest));
       const files = new Map();
-      for (const f of m.files) files.set(f.path, { sha: f.sha256, bytes: await bytesOf(await cache.match(new URL(f.path, here))) });
+      const read = await Promise.all(m.files.map(async (f) => bytesOf(await cache.match(new URL(f.path, here)))));
+      m.files.forEach((f, i) => files.set(f.path, { sha: f.sha256, bytes: read[i] }));
       return { hash, files };
     } catch {
       return null;
     }
-  };
-  const latest = async () => {
-    const r = await fetch(file("version.json"), { cache: "no-store" });
-    if (!r.ok) throw new Error(`version.json: ${r.status}`);
-    const m = (await r.json()).manifest;
-    return typeof m === "string" && /^[0-9a-f]{64}$/.test(m) ? m : null;
   };
 
   // The choice, once (§5): the site's bundle when it verifies and is not older than the one kept; else the one kept.
   const current = await inUse();
   let chosen = current ? await kept(current.hash).catch(() => null) : null;
   try {
-    const hash = await latest();
+    const hash = await asking;
     if (hash !== null && hash !== chosen?.hash) {
       const fresh = await ensure(hash);
       if (chosen === null || newer(fresh.version, chosen.version)) chosen = fresh;
