@@ -1,0 +1,1 @@
+(function(){function e(){let e=globalThis.FileSystemFileHandle;return e!==void 0&&`createSyncAccessHandle`in e.prototype&&typeof navigator.storage?.getDirectory==`function`}let t=self.postMessage.bind(self);e()?navigator.storage.getDirectory().then(()=>t(!0),()=>t(!1)):t(!1)})();
