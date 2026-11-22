@@ -197,9 +197,12 @@ async function main() {
   };
 
   // The choice, once (§5): the site's bundle when it verifies and is not older than the one kept; else the one kept.
+  // With a bundle kept, it runs at once and the site is not waited on: a browser whose requests hang with no answer
+  // never opened the app (bugs/web-app-never-opens-while-browser-s); the page itself takes the site's newer bundle
+  // when it comes, without a reload (web/update.ts, looked for at start and on the browser's events).
   const current = await inUse();
   let chosen = current ? await kept(current.hash).catch(() => null) : null;
-  try {
+  if (chosen === null) try {
     const hash = await asking;
     if (hash !== null && hash !== chosen?.hash) {
       const fresh = await ensure(hash);
