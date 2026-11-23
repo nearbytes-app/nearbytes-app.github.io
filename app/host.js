@@ -78,7 +78,9 @@ async function port() {
 
 // meeting points: begin
 // The meeting points, in order (meeting-point 0.2 §10.1): the first's store is the one used.
-const DEFAULT_SIGNALS = ["wss://nearbytes.make-become.workers.dev", "wss://sleipnir.taildccb32.ts.net"];
+// None are named here: the web build writes the defaults (release/meeting-points) into config.json, and a page
+// given none leaves the core its own default.
+const DEFAULT_SIGNALS = [];
 // config.json's "signal": a list of wss:// addresses, or one as a single string (every older site's); else the defaults.
 function meetingPoints(given) {
   if (typeof given === "string" && given !== "") return [given];
