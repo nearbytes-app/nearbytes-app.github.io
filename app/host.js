@@ -215,7 +215,11 @@ async function main() {
   if (chosen === null) throw new Error("no application bundle could be verified");
   console.info(`Nearbytes: the app bundle ${chosen.version} (${chosen.hash.slice(0, 12)}), signature verified`);
   await host.put(pointer, new Response(chosen.hash));
-  for (const name of await caches.keys()) if (name.startsWith(BUNDLE) && name !== BUNDLE + chosen.hash) await caches.delete(name);
+  // The service worker deletes a bundle only once no open window uses it: this page says which it runs, a bundle it
+  // stages and the one it takes over (sw.js; bugs/page-open-across-site-republish-hangs-at: another tab's start
+  // deleted the bundle an open page ran, whose next worker then had the site's not-found page).
+  const uses = (hash, only) => navigator.serviceWorker.controller?.postMessage({ nearbytes: "uses", bundle: hash, only });
+  uses(chosen.hash, true);
 
   globalThis.nearbytesHost = {
     build: chosen.hash,
@@ -224,11 +228,13 @@ async function main() {
     signals,
     latest: async () => latest(),
     stage: async (hash) => {
+      uses(hash, false);
       const staged = await ensure(hash);
       return { html: staged.html, base: new URL(`@${hash}/`, here).href };
     },
     adopt: async (hash) => {
       await host.put(pointer, new Response(hash));
+      uses(hash, true);
     },
   };
   run(chosen.html);
