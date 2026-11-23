@@ -14,7 +14,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-PsYolklwWTkxCkBBoNEKLgP0Eiq52W7SX3Yzh7vnPrk='; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'sha256-t0JiqdDKQHrZ0/z19sLUy/w/I0RfwKEfza5vkuNTlmU='; base-uri 'none'; form-action 'none'">
 <title>Nearbytes</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -55,13 +55,14 @@
   <footer class="small muted"><a href="get/">Get the app</a> · <a href="testers/">Agreement and privacy notice</a> · <a href="warnings/">Warnings for testers</a></footer>
 </main>
 <script>
+// A link may end with a dot and the addresses of the device that made it (`identity` 0.8 §8.1): kept whole.
 const invite = location.hash.slice(1);
 // This browser holds a trusted home (the app leaves this flag when it keeps one): the app opens at once, no click.
 try {
   if (invite === "" && localStorage.getItem("nearbytes-holds-home") === "1") location.replace("app/");
 } catch (e) {}
-const hub = /^1\.[A-Za-z0-9_-]{43}$/.test(invite);
-const ticket = /^2\.[A-Za-z0-9_-]{60,600}$/.test(invite);
+const hub = /^1\.[A-Za-z0-9_-]{43}(\.[A-Za-z0-9_-]{4,220})?$/.test(invite);
+const ticket = /^2\.[A-Za-z0-9_-]{60,600}(\.[A-Za-z0-9_-]{4,220})?$/.test(invite);
 if (hub || ticket) {
   if (ticket) document.getElementById("what").textContent = "This is your invitation to the Nearbytes beta.";
   document.getElementById("open").href = "nearbytes://join#" + invite;
@@ -77,9 +78,9 @@ if (hub || ticket) {
 document.getElementById("paste").addEventListener("submit", (e) => {
   e.preventDefault();
   const text = document.getElementById("link").value;
-  const found = /#([12]\.[A-Za-z0-9_-]{43,600})/.exec(text);
+  const found = /#([12]\.[A-Za-z0-9_-]{43,600}(\.[A-Za-z0-9_-]{4,220})?)/.exec(text);
   const frag = found === null ? "" : found[1];
-  if (/^1\.[A-Za-z0-9_-]{43}$/.test(frag) || /^2\.[A-Za-z0-9_-]{60,600}$/.test(frag)) location.href = "app/#" + frag;
+  if (/^1\.[A-Za-z0-9_-]{43}(\.[A-Za-z0-9_-]{4,220})?$/.test(frag) || /^2\.[A-Za-z0-9_-]{60,600}(\.[A-Za-z0-9_-]{4,220})?$/.test(frag)) location.href = "app/#" + frag;
   else document.getElementById("paste-wrong").hidden = false;
 });
 </script>
